@@ -39,10 +39,14 @@ import com.abenzaggagh.jetnote.util.formatDate
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun NoteTopBar(navigationIcon: @Composable () -> Unit = {}) {
+fun NoteTopBar(navigationIcon: @Composable () -> Unit = {},
+               actionButton: @Composable () -> Unit = {}) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         navigationIcon = navigationIcon,
+        actions = {
+            actionButton()
+        },
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = Color.White
