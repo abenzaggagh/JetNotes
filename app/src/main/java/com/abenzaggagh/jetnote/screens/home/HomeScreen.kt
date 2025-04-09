@@ -1,4 +1,4 @@
-package com.abenzaggagh.jetnote.screens
+package com.abenzaggagh.jetnote.screens.home
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,21 +19,41 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.abenzaggagh.jetnote.components.NoteButton
 import com.abenzaggagh.jetnote.components.NoteInputText
 import com.abenzaggagh.jetnote.components.NoteRow
 import com.abenzaggagh.jetnote.components.NoteTopBar
 import com.abenzaggagh.jetnote.model.Note
-import java.util.UUID
+import com.abenzaggagh.jetnote.navigation.NoteScreens
 
 
 @Composable
+fun HomeScreen(navController: NavController = rememberNavController(),
+               noteViewModel: NoteViewModel) {
+
+    val notes = noteViewModel.noteList.collectAsState().value
+
+    NoteView(
+        notes = notes,
+        onAddNote = {
+            noteViewModel.addNote(it)
+        },
+        onNoteClick = {
+            navController.navigate(route = NoteScreens.DetailsScreen.name + "/${it.id}")
+        }
+    )
+
+}
+
+@Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun NoteScreen(notes: List<Note>,
-               onAddNote: (Note) -> Unit,
-               onRemoveNote: (Note) -> Unit) {
+fun NoteView(
+    notes: List<Note>,
+    onAddNote: (Note) -> Unit,
+    onNoteClick: (Note) -> Unit) {
 
     var title by remember {
         mutableStateOf("")
@@ -95,35 +115,17 @@ fun NoteScreen(notes: List<Note>,
             HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp))
 
             LazyColumn {
-                /*
-                items(notes) { note ->
-                    NoteRow(
-                        note = note,
-                        onNoteClicked = {
-                            onRemoveNote(note)
-                        }
-                    )
-                }
-                */
-
                 items(items = notes, key = { it.id }) { note ->
                     NoteRow(
                         note = note,
                         onNoteClicked = {
-                            onRemoveNote(it)
+                            onNoteClick(it)
                         }
                     )
                 }
-
             }
 
 
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun NoteScreenPreview() {
-    NoteScreen(notes = emptyList(), onAddNote = {}, onRemoveNote = {})
 }

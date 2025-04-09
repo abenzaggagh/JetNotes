@@ -1,11 +1,11 @@
-package com.abenzaggagh.jetnote.screens
+package com.abenzaggagh.jetnote.screens.home
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import com.abenzaggagh.jetnote.data.NoteDataSource
 import com.abenzaggagh.jetnote.model.Note
 import com.abenzaggagh.jetnote.repository.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +23,10 @@ class NoteViewModel @Inject constructor(private val repository: NoteRepository):
 
     val noteList = _noteList.asStateFlow()
 
+    private val _note = MutableStateFlow<Note?>(null)
+
+    var note = _note.asStateFlow()
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             repository.getAllNote().distinctUntilChanged().collect { notes ->
@@ -38,6 +42,10 @@ class NoteViewModel @Inject constructor(private val repository: NoteRepository):
 
     fun addNote(note: Note) = viewModelScope.launch {
         repository.addNote(note)
+    }
+
+    fun getNote(id: String) = viewModelScope.launch {
+        _note.value = repository.getNote(id)
     }
 
 

@@ -34,21 +34,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.abenzaggagh.jetnote.R
 import com.abenzaggagh.jetnote.model.Note
-import java.time.format.DateTimeFormatter
+import com.abenzaggagh.jetnote.util.formatDate
 
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun NoteTopBar() {
+fun NoteTopBar(navigationIcon: @Composable () -> Unit = {}) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
-        actions = {
-            Icon(
-                imageVector = Icons.Rounded.Notifications,
-                contentDescription = "Notifications",
-                tint = Color.White
-            )
-        },
+        navigationIcon = navigationIcon,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = Color.White
@@ -132,11 +126,11 @@ fun NoteRow(
                 style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 3)
-            /* Text(
-                text = note.entryDate.toString(), //.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
+            Text(
+                text = formatDate(note.entryDate.time), //.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = modifier.padding(top = 8.dp)
-            ) */
+            )
         }
     }
 }
