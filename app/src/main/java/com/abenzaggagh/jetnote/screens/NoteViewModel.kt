@@ -1,22 +1,56 @@
 package com.abenzaggagh.jetnote.screens
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.abenzaggagh.jetnote.data.NoteDataSource
 import com.abenzaggagh.jetnote.model.Note
+import com.abenzaggagh.jetnote.repository.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NoteViewModel: ViewModel() {
+@HiltViewModel
+class NoteViewModel @Inject constructor(private val repository: NoteRepository): ViewModel() {
 
-    var noteList = mutableStateListOf<Note>()
+    private val _noteList = MutableStateFlow<List<Note>>(emptyList())
+
+    val noteList = _noteList.asStateFlow()
 
     init {
-        noteList.addAll(NoteDataSource().loadNotes())
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.getAllNote().distinctUntilChanged().collect { notes ->
+                if (notes.isEmpty()) {
+                    Log.d("Note", "Notes List Empty")
+                    _noteList.value = emptyList<Note>()
+                } else {
+                    _noteList.value = notes
+                }
+            }
+        }
     }
 
-    fun addNote(note: Note) = noteList.add(note)
+    fun addNote(note: Note) = viewModelScope.launch {
+        repository.addNote(note)
+    }
 
-    fun removeNote(note: Note) = noteList.remove(note)
 
-    fun getAllNotes(): List<Note> = noteList
+    fun updateNote(note: Note) = viewModelScope.launch {
+        repository.updateNote(note)
+    }
+
+    fun removeNote(note: Note) = viewModelScope.launch {
+        repository.deleteNote(note)
+    }
+
+    fun removeAll() = viewModelScope.launch {
+        repository.deleteAllNotes()
+    }
 
 }

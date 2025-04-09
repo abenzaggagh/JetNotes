@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
@@ -25,6 +26,7 @@ import com.abenzaggagh.jetnote.components.NoteInputText
 import com.abenzaggagh.jetnote.components.NoteRow
 import com.abenzaggagh.jetnote.components.NoteTopBar
 import com.abenzaggagh.jetnote.model.Note
+import java.util.UUID
 
 
 @Composable
@@ -93,6 +95,7 @@ fun NoteScreen(notes: List<Note>,
             HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp))
 
             LazyColumn {
+                /*
                 items(notes) { note ->
                     NoteRow(
                         note = note,
@@ -101,6 +104,17 @@ fun NoteScreen(notes: List<Note>,
                         }
                     )
                 }
+                */
+
+                items(items = notes, key = { it.id }) { note ->
+                    NoteRow(
+                        note = note,
+                        onNoteClicked = {
+                            onRemoveNote(it)
+                        }
+                    )
+                }
+
             }
 
 

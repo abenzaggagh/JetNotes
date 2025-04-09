@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -65,7 +67,7 @@ fun NoteInputText(modifier: Modifier = Modifier,
 
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    TextField(
+    OutlinedTextField(
         value = text,
         onValueChange = onTextChange,
         modifier = modifier,
@@ -79,6 +81,7 @@ fun NoteInputText(modifier: Modifier = Modifier,
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent
         ),
+        shape = RoundedCornerShape(CornerSize(8.dp)),
         keyboardActions = KeyboardActions(onDone = {
             onImeAction()
 
@@ -129,11 +132,11 @@ fun NoteRow(
                 style = MaterialTheme.typography.bodyMedium,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 3)
-            Text(
-                text = note.entryDate.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
+            /* Text(
+                text = note.entryDate.toString(), //.format(DateTimeFormatter.ofPattern("dd MMM yyyy")),
                 style = MaterialTheme.typography.labelMedium,
                 modifier = modifier.padding(top = 8.dp)
-            )
+            ) */
         }
     }
 }
